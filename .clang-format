@@ -1,0 +1,27 @@
+---
+# clang-format requirements:
+# Using Google style as base
+# Maximum line length is 120
+BasedOnStyle: Google
+ColumnLimit: 120
+
+# clang-format requirements:
+# Use spaces for indentation, with a tab width of 4 spaces
+UseTab: Never
+TabWidth: 4
+IndentWidth: 4
+
+# clang-format requirements:
+# Pointer alignment to the left, do not auto-derive
+DerivePointerAlignment: false
+PointerAlignment: Left
+
+# clang-format requirements:
+# Allow single line if statements and loops are short
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Inline
+
+# clang-format requirements:
+# Auto sorting #include
+SortIncludes: CaseSensitive

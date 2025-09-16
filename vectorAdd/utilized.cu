@@ -16,4 +16,3 @@ extern "C" void solve(const float* A, const float* B, float* C, int N) {
     vector_add<<<blocksPerGrid, threadsPerBlock>>>(A, B, C, N);
     cudaDeviceSynchronize();
 }
-
