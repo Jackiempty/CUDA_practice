@@ -5,7 +5,8 @@ BUILD := build
 .PHONY: all naive optimized
 
 all: naive.cuh optimized.cuh
-	@$(NVCC) main.cu -o main
+	@mkdir -p $(BUILD)
+	@$(NVCC) main.cu -o ./build/main
 
 clean:
 	rm -rf $(BUILD)
