@@ -6,8 +6,6 @@ __global__ void vector_add_naive(const float* A, const float* B, float* C, int N
     }
 }
 
-
-
 // A, B, C are device pointers (i.e. pointers to memory on the GPU)
 void naive(const float* A, const float* B, float* C, int N) {
     int threadsPerBlock = 256;
