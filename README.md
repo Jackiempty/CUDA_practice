@@ -1,4 +1,4 @@
 # Intro
-Cuda kernel programming practice by `Jackiempty`  
+Cuda kernel programming practice by `Jackiempty`
 
-Supervised by `yutingshih`
+Aimed to support Google VP team in AISLab to improve the platform's performance
