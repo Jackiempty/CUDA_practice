@@ -33,15 +33,16 @@ void init_vector(float* vec, int n) {
 }
 
 int main() {
-    float *h_a, *h_b, *h_c_cpu, *h_c_gpu_1d;
-    float *d_a, *d_b, *d_c_1d;
+    float *h_a, *h_b, *h_c_cpu, *h_c_gpu_naive, *h_c_gpu_optimized;
+    float *d_a, *d_b, *d_c_naive, *d_c_optimized;
     size_t size = N * sizeof(float);
 
     // Allocate host memory
     h_a = (float*)malloc(size);
     h_b = (float*)malloc(size);
     h_c_cpu = (float*)malloc(size);
-    h_c_gpu_1d = (float*)malloc(size);
+    h_c_gpu_naive = (float*)malloc(size);
+    h_c_gpu_optimized = (float*)malloc(size);
 
     // Initialize vectors
     srand(time(NULL));
@@ -51,7 +52,8 @@ int main() {
     // Allocate device memory
     cudaMalloc(&d_a, size);
     cudaMalloc(&d_b, size);
-    cudaMalloc(&d_c_1d, size);
+    cudaMalloc(&d_c_naive, size);
+    cudaMalloc(&d_c_optimized, size);
 
     // Copy data to device
     cudaMemcpy(d_a, h_a, size, cudaMemcpyHostToDevice);
@@ -61,8 +63,8 @@ int main() {
     printf("Performing warm-up runs...\n");
     for (int i = 0; i < 3; i++) {
         vector_add_cpu(h_a, h_b, h_c_cpu, N);
-        optimized(d_a, d_b, d_c_1d, N);
-        cudaDeviceSynchronize();
+        // naive(d_a, d_b, d_c_naive, N);
+        // cudaDeviceSynchronize();
     }
 
     // Benchmark CPU implementation
@@ -76,27 +78,71 @@ int main() {
     }
     double cpu_avg_time = cpu_total_time / 5.0;
 
-    // Benchmark GPU 1D implementation
-    printf("Benchmarking GPU 1D implementation...\n");
-    double gpu_1d_total_time = 0.0;
+    // Benchmark GPU naive implementation
+    printf("Benchmarking GPU naive implementation...\n");
+    double gpu_naive_total_time = 0.0;
     for (int i = 0; i < 100; i++) {
-        cudaMemset(d_c_1d, 0, size);  // Clear previous results
+        cudaMemset(d_c_naive, 0, size);  // Clear previous results
         double start_time = get_time();
-        optimized(d_a, d_b, d_c_1d, N);
+        naive(d_a, d_b, d_c_naive, N);
         double end_time = get_time();
-        gpu_1d_total_time += end_time - start_time;
+        gpu_naive_total_time += end_time - start_time;
     }
-    double gpu_1d_avg_time = gpu_1d_total_time / 100.0;
+    double gpu_naive_avg_time = gpu_naive_total_time / 100.0;
 
-    // Verify 1D results immediately
-    cudaMemcpy(h_c_gpu_1d, d_c_1d, size, cudaMemcpyDeviceToHost);
-    bool correct_1d = true;
+    // Verify naive results immediately
+    cudaMemcpy(h_c_gpu_naive, d_c_naive, size, cudaMemcpyDeviceToHost);
+    bool correct_naive = true;
     for (int i = 0; i < N; i++) {
-        if (fabs(h_c_cpu[i] - h_c_gpu_1d[i]) > 1e-4) {
-            correct_1d = false;
-            std::cout << i << " cpu: " << h_c_cpu[i] << " != " << h_c_gpu_1d[i] << std::endl;
+        if (fabs(h_c_cpu[i] - h_c_gpu_naive[i]) > 1e-4) {
+            correct_naive = false;
+            std::cout << i << " cpu: " << h_c_cpu[i] << " != " << h_c_gpu_naive[i] << std::endl;
             break;
         }
     }
-    printf("1D Results are %s\n", correct_1d ? "correct" : "incorrect");
+    printf("Naive Results are %s\n", correct_naive ? "correct" : "incorrect");
+
+    // Benchmark GPU optimized implementation
+    printf("Benchmarking GPU optimized implementation...\n");
+    double gpu_optimized_total_time = 0.0;
+    for (int i = 0; i < 100; i++) {
+        cudaMemset(d_c_optimized, 0, size);  // Clear previous results
+        double start_time = get_time();
+        optimized(d_a, d_b, d_c_optimized, N);
+        double end_time = get_time();
+        gpu_optimized_total_time += end_time - start_time;
+    }
+    double gpu_optimized_avg_time = gpu_optimized_total_time / 100.0;
+
+    // Verify optimized results immediately
+    cudaMemcpy(h_c_gpu_optimized, d_c_optimized, size, cudaMemcpyDeviceToHost);
+    bool correct_optimized = true;
+    for (int i = 0; i < N; i++) {
+        if (fabs(h_c_cpu[i] - h_c_gpu_optimized[i]) > 1e-4) {
+            correct_optimized = false;
+            std::cout << i << " cpu: " << h_c_cpu[i] << " != " << h_c_gpu_optimized[i] << std::endl;
+            break;
+        }
+    }
+    printf("Optimized Results are %s\n", correct_optimized ? "correct" : "incorrect");
+
+    // Print results
+    printf("CPU average time: %f milliseconds\n", cpu_avg_time * 1000);
+    printf("GPU naive average time: %f milliseconds\n", gpu_naive_avg_time * 1000);
+    printf("GPU optimized average time: %f milliseconds\n", gpu_optimized_avg_time * 1000);
+    printf("Speedup (CPU vs GPU naive): %fx\n", cpu_avg_time / gpu_naive_avg_time);
+    printf("Speedup (CPU vs GPU optimized): %fx\n", cpu_avg_time / gpu_optimized_avg_time);
+
+    // Free memory
+    free(h_a);
+    free(h_b);
+    free(h_c_cpu);
+    free(h_c_gpu_naive);
+    free(h_c_gpu_optimized);
+    cudaFree(d_a);
+    cudaFree(d_b);
+    cudaFree(d_c_naive);
+    cudaFree(d_c_optimized);
+
+    return 0;
 }
