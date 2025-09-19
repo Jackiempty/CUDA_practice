@@ -10,3 +10,6 @@ all: naive.cuh optimized.cuh
 
 clean:
 	rm -rf $(BUILD)
+
+format:
+	@-find . -name build -type d \! -prune -o -iname '*.cuh' -o -iname '*.cu' | xargs clang-format -i
