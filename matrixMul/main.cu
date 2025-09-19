@@ -10,13 +10,13 @@
 #include "optimized.cuh"
 
 #define M 256  // Number of rows in A and C
-#define N 512   // Number of columns in A and rows in B
+#define N 512  // Number of columns in A and rows in B
 #define K 256  // Number of columns in B and C
 #define BLOCK_SIZE 32
 
 // Example 3x2 @ 2x4 = 3x4 -> (M x K) @ (K x N) = (M x N)
-// A = [[1, 2], 
-//      [3, 4], 
+// A = [[1, 2],
+//      [3, 4],
 //      [5, 6]]
 
 // B = [[7, 8, 9, 10],
@@ -38,7 +38,7 @@ double get_time() {
 }
 
 // CPU matrix multiplication
-void matmul_cpu(float *A, float *B, float *C, int m, int n, int k) {
+void matmul_cpu(float* A, float* B, float* C, int m, int n, int k) {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < k; j++) {
             float sum = 0.0f;
@@ -51,7 +51,7 @@ void matmul_cpu(float *A, float *B, float *C, int m, int n, int k) {
 }
 
 // Initialize matrix with random values
-void init_matrix(float *mat, int rows, int cols) {
+void init_matrix(float* mat, int rows, int cols) {
     for (int i = 0; i < rows * cols; i++) {
         mat[i] = (float)rand() / RAND_MAX;
     }
@@ -110,7 +110,7 @@ int main() {
     for (int i = 0; i < 100; i++) {
         cudaMemset(d_c_naive, 0, size_C);  // Clear previous results
         double start_time = get_time();
-        naive(d_a, d_b, d_c_naive ,M , N, K);
+        naive(d_a, d_b, d_c_naive, M, N, K);
         double end_time = get_time();
         gpu_naive_total_time += end_time - start_time;
     }
@@ -134,7 +134,7 @@ int main() {
     for (int i = 0; i < 100; i++) {
         cudaMemset(d_c_optimized, 0, size_C);  // Clear previous results
         double start_time = get_time();
-        optimized(d_a, d_b, d_c_optimized ,M , N, K);
+        optimized(d_a, d_b, d_c_optimized, M, N, K);
         double end_time = get_time();
         gpu_optimized_total_time += end_time - start_time;
     }
