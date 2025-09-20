@@ -76,50 +76,50 @@ int main() {
         cpu_total_time += end_time - start_time;
     }
     double cpu_avg_time = cpu_total_time / 5.0;
-    /*
+    
     // Benchmark GPU naive implementation
     printf("Benchmarking GPU naive implementation...\n");
     double gpu_naive_total_time = 0.0;
     for (int i = 0; i < 100; i++) {
-        cudaMemset(d_c_naive, 0, size_C);  // Clear previous results
+        cudaMemset(d_output_naive, 0, size);  // Clear previous results
         double start_time = get_time();
-        naive(d_a, d_b, d_c_naive, M, N, K);
+        naive(d_input, d_output_naive, M, N);
         double end_time = get_time();
         gpu_naive_total_time += end_time - start_time;
     }
     double gpu_naive_avg_time = gpu_naive_total_time / 100.0;
 
     // Verify naive results immediately
-    cudaMemcpy(h_c_gpu_naive, d_c_naive, size_C, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_output_gpu_naive, d_output_naive, size, cudaMemcpyDeviceToHost);
     bool correct_naive = true;
     for (int i = 0; i < N; i++) {
-        if (fabs(h_c_cpu[i] - h_c_gpu_naive[i]) > 1e-4) {
+        if (fabs(h_output_cpu[i] - h_output_gpu_naive[i]) > 1e-4) {
             correct_naive = false;
-            std::cout << i << " cpu: " << h_c_cpu[i] << " != " << h_c_gpu_naive[i] << std::endl;
+            std::cout << i << " cpu: " << h_output_cpu[i] << " != " << h_output_gpu_naive[i] << std::endl;
             break;
         }
     }
     printf("Naive Results are %s\n", correct_naive ? "correct" : "incorrect");
-
+    
     // Benchmark GPU optimized implementation
     printf("Benchmarking GPU optimized implementation...\n");
     double gpu_optimized_total_time = 0.0;
     for (int i = 0; i < 100; i++) {
-        cudaMemset(d_c_optimized, 0, size_C);  // Clear previous results
+        cudaMemset(d_output_optimized, 0, size);  // Clear previous results
         double start_time = get_time();
-        optimized(d_a, d_b, d_c_optimized, M, N, K);
+        optimized(d_input, d_output_optimized, M, N);
         double end_time = get_time();
         gpu_optimized_total_time += end_time - start_time;
     }
     double gpu_optimized_avg_time = gpu_optimized_total_time / 100.0;
 
     // Verify optimized results immediately
-    cudaMemcpy(h_c_gpu_optimized, d_c_optimized, size_C, cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_output_gpu_optimized, d_output_optimized, size, cudaMemcpyDeviceToHost);
     bool correct_optimized = true;
     for (int i = 0; i < N; i++) {
-        if (fabs(h_c_cpu[i] - h_c_gpu_optimized[i]) > 1e-4) {
+        if (fabs(h_output_cpu[i] - h_output_gpu_optimized[i]) > 1e-4) {
             correct_optimized = false;
-            std::cout << i << " cpu: " << h_c_cpu[i] << " != " << h_c_gpu_optimized[i] << std::endl;
+            std::cout << i << " cpu: " << h_output_cpu[i] << " != " << h_output_gpu_optimized[i] << std::endl;
             break;
         }
     }
@@ -132,7 +132,7 @@ int main() {
     printf("Speedup (CPU vs GPU naive): %fx\n", cpu_avg_time / gpu_naive_avg_time);
     printf("Speedup (CPU vs GPU optimized): %fx\n", cpu_avg_time / gpu_optimized_avg_time);
     printf("Speedup (GPU naive vs GPU optimized): %fx\n", gpu_naive_avg_time / gpu_optimized_avg_time);
-    */
+
     // Free memory
     free(h_input);
     free(h_output_cpu);
