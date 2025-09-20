@@ -39,7 +39,6 @@ int main() {
     float *h_input, *h_output_cpu, *h_output_gpu_naive, *h_output_gpu_optimized;
     float *d_input, *d_output_naive, *d_output_optimized;
     int size = M * N * sizeof(float);
-    
 
     // Allocate host memory
     h_input = (float*)malloc(size);
@@ -65,7 +64,7 @@ int main() {
         // vector_add_cpu(h_a, h_b, h_c_cpu, N);
         mat_trans_cpu(h_input, h_output_cpu, M, N);
     }
-   
+
     // Benchmark CPU implementation
     printf("Benchmarking CPU implementation...\n");
     double cpu_total_time = 0.0;
@@ -76,7 +75,7 @@ int main() {
         cpu_total_time += end_time - start_time;
     }
     double cpu_avg_time = cpu_total_time / 5.0;
-    
+
     // Benchmark GPU naive implementation
     printf("Benchmarking GPU naive implementation...\n");
     double gpu_naive_total_time = 0.0;
@@ -100,7 +99,7 @@ int main() {
         }
     }
     printf("Naive Results are %s\n", correct_naive ? "correct" : "incorrect");
-    
+
     // Benchmark GPU optimized implementation
     printf("Benchmarking GPU optimized implementation...\n");
     double gpu_optimized_total_time = 0.0;
