@@ -132,6 +132,7 @@ int main() {
     printf("GPU optimized average time: %f milliseconds\n", gpu_optimized_avg_time * 1000);
     printf("Speedup (CPU vs GPU naive): %fx\n", cpu_avg_time / gpu_naive_avg_time);
     printf("Speedup (CPU vs GPU optimized): %fx\n", cpu_avg_time / gpu_optimized_avg_time);
+    printf("Speedup (GPU naive vs GPU optimized): %fx\n", gpu_naive_avg_time / gpu_optimized_avg_time);
 
     // Free memory
     free(h_a);
