@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 #include "naive.cuh"
 #include "optimized.cuh"
@@ -165,7 +165,7 @@ int main() {
     // destroy event
     cudaEventDestroy(start);
     cudaEventDestroy(stop);
-    
+
     // Free memory
     free(h_input);
     free(h_output_cpu);
