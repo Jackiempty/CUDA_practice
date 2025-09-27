@@ -38,11 +38,13 @@ __global__ void matrix_multiplication_kernel_optimized(const float* A, const flo
 }
 
 // A, B, C are device pointers (i.e. pointers to memory on the GPU)
-void optimized(const float* A, const float* B, float* C, int M, int N, int K) {
+void optimized(const float* A, const float* B, float* C, int M, int N, int K, cudaEvent_t* start, cudaEvent_t* stop) {
     dim3 threadsPerBlock(TILE_SIZE, TILE_SIZE);
     dim3 blocksPerGrid((K + threadsPerBlock.x - 1) / threadsPerBlock.x,
                        (M + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
+    cudaEventRecord(*start);
     matrix_multiplication_kernel_optimized<<<blocksPerGrid, threadsPerBlock>>>(A, B, C, M, N, K);
+    cudaEventRecord(*stop);
     cudaDeviceSynchronize();
 }

@@ -14,11 +14,13 @@ __global__ void matrix_multiplication_kernel_naive(const float* A, const float* 
 }
 
 // A, B, C are device pointers (i.e. pointers to memory on the GPU)
-void naive(const float* A, const float* B, float* C, int M, int N, int K) {
+void naive(const float* A, const float* B, float* C, int M, int N, int K, cudaEvent_t* start, cudaEvent_t* stop) {
     dim3 threadsPerBlock(16, 16);
     dim3 blocksPerGrid((K + threadsPerBlock.x - 1) / threadsPerBlock.x,
                        (M + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
+    cudaEventRecord(*start);
     matrix_multiplication_kernel_naive<<<blocksPerGrid, threadsPerBlock>>>(A, B, C, M, N, K);
+    cudaEventRecord(*stop);
     cudaDeviceSynchronize();
 }

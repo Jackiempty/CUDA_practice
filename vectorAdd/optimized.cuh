@@ -9,10 +9,11 @@ __global__ void vector_add_optimized(const float* A, const float* B, float* C, i
 }
 
 // A, B, C are device pointers (i.e. pointers to memory on the GPU)
-void optimized(const float* A, const float* B, float* C, int N) {
+void optimized(const float* A, const float* B, float* C, int N, cudaEvent_t* start, cudaEvent_t* stop) {
     int threadsPerBlock = 256;
     int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;
-
+    cudaEventRecord(*start);
     vector_add_optimized<<<blocksPerGrid, threadsPerBlock>>>(A, B, C, N);
+    cudaEventRecord(*stop);
     cudaDeviceSynchronize();
 }

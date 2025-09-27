@@ -7,11 +7,13 @@ __global__ void vector_add_naive(const float* A, const float* B, float* C, int N
 }
 
 // A, B, C are device pointers (i.e. pointers to memory on the GPU)
-void naive(const float* A, const float* B, float* C, int N) {
+void naive(const float* A, const float* B, float* C, int N, cudaEvent_t* start, cudaEvent_t* stop) {
     // int threadsPerBlock = 256;
     // int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;
 
     // vector_add_naive<<<blocksPerGrid, threadsPerBlock>>>(A, B, C, N);
+    cudaEventRecord(*start);
     vector_add_naive<<<1, 1>>>(A, B, C, N);
+    cudaEventRecord(*stop);
     cudaDeviceSynchronize();
 }
